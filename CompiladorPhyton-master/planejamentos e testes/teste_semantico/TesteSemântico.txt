@@ -1,0 +1,176 @@
+registro Pessoa {
+	cadeia nome;
+	inteiro idade;
+	real idade; // ERRO: VARI�VEL COM MESMO NOME
+}
+registro Pessoa {//ERRO: REGISTRO COM MESMO NOME
+	cadeia nome;
+	inteiro idade;
+}
+registro cidade {
+	cadeia nome;
+	inteiro populacao;
+	}
+constantes{
+	inteiro MAX = 10;
+	inteiro max = 10;
+	inteiro MAX2 = 10.10;//ERRO: CONVERS�O DE TIPO
+	real MIM = 2;//ERRO: CONVERS�O DE TIPO
+	real MAX = 12; //ERRO: VARI�VEL J� DECLARADA
+	cadeia TEXTO = "mensagem";
+	caractere LETRA = 'a';
+	booleano CONDICAO = verdadeiro;
+	cadeia ERRADA = 'a'; //ERRO: CONVERS�O DE TIPOS
+	
+}
+variaveis
+{
+	inteiro psy;
+	inteiro zeta = 10.12; // ERRO: CONVERS�O DE TIPO
+	inteiro psy = 10;
+	cadeia mensagem;
+	cadeia mensagem2 = "texto";
+	caractere letra = 'z'; //ERRO: VARI�VEL J� DECLARADA
+	pessoa ana;
+	inteiro vetor [10];
+	inteiro matriz [12][12];
+}
+funcao inteiro faznada(inteiro z, real b, caractere ar,  inteiro z)
+{
+	variaveis
+	{
+		inteiro a = 10;
+		inteiro c = 20;
+		booleano state = verdadeiro;
+		inteiro max = 1000; //ERRO: J� DECLARADA
+		cadeia string;
+		real z;
+	}
+	
+	c = z; //ERRO: CONVERS�O DE TIPO
+
+	se(a==b)
+	{
+		escreva("sucesso");
+	}
+	senao
+	{
+		escreva("sucesso");
+	};
+	para(i=10;a<10;i++) //ERRO: VARI�VEL N�O DECLARADA
+	{
+		escreva("sucesso");
+	};
+	retorno vetor[10];
+}
+funcao inteiro faznada(inteiro a) //ERRO: FUN��O J� EXISTENTE
+{
+	variaveis
+	{
+		inteiro a = 10;
+		inteiro c = 20;
+		booleano state = verdadeiro;
+		inteiro max = 1000; //ERRO: J� DECLARADA
+		cadeia string;
+	}
+
+	se(a==b)
+	{
+		escreva("sucesso");
+	}
+	senao
+	{
+		escreva("sucesso");
+	};
+	para(i=10;a<10;i++) //ERRO: VARI�VEL N�O DECLARADA
+	{
+		escreva("sucesso");
+	};
+	retorno a;
+}
+
+funcao Pessoa faznadaReg(inteiro z, real b, caractere ar)
+{
+	variaveis
+	{
+		inteiro a = 10;
+		Pessoa pedro;
+		inteiro c = 20;
+		booleano state = verdadeiro;
+		inteiro max = 1000; //ERRO: J� DECLARADA
+		cadeia string;
+	}
+	
+	c = z; //ERRO: CONVERS�O DE TIPO
+
+	se(a==b)
+	{
+		escreva("sucesso");
+	}
+	senao
+	{
+		escreva("sucesso");
+	};
+	para(i=10;a<10;i++) //ERRO: VARI�VEL N�O DECLARADA
+	{
+		escreva("sucesso");
+	};
+	retorno pedro;
+}
+funcao vazio faznadaErrado(inteiro a, real b, caractere c)
+{
+	variaveis
+	{
+		inteiro a = 10; //ERRO: J� DECLARADO (COMO PAR�METRO)
+		inteiro c = 20;
+		booleano state = verdadeiro;
+		inteiro max = 1000; //ERRO: J� DECLARADA
+		cadeia string;
+		notReg reg;
+	}
+
+	se(a==b)
+	{
+		escreva("sucesso");
+	}
+	senao
+	{
+		escreva("sucesso");
+	};
+	para(i=10;a<10;i++) //ERRO: VARI�VEL N�O DECLARADA
+	{
+		se (MAX > 8) {
+			escreva("sucesso");
+		};
+		
+	};
+	retorno string; //ERRO: RETORNO INCOMPATIVEL
+}
+
+algoritmo
+{
+	variaveis
+	{
+		inteiro a = 10;
+		inteiro b = 20;
+		inteiro c = 30;
+		real d = 40;
+		inteiro x;
+		booleano false = falso;
+		caractere letter = 'f';
+		Pessoa cliente;
+		
+	}
+	
+	MAX = 10; //ERRO: ATRIBUI��O DE CONSTANTE
+	
+	x = a+b+c+d; //ERRO: CONVERS�O DE TIPO
+	
+	faznadaErrado(a, d, f);
+	faznadaErrado(a, f); //ERRO: PAR�METROS INCORRETOS
+
+	d = faznada(a, d, letter); //ERRO: CONVERS�O DE TIPOS
+	
+	cliente = faznadaReg(a, d, letter);
+
+}
