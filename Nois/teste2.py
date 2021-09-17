@@ -5,9 +5,21 @@ IDENTIFICADOR = 1
 NUM_INT = 2
 NUM_REAL = 3
 EOS = 4
+FRASE = 5
+RESERVADAS = 6
+SEM_ATRIBUTOS = 7
+OP_RELACIONAL = 8
+OP_LOGICO = 9
+PALAVRAS_RESERVADAS = ['ALGORITMO','ATE','CADEIA', 'CARACTER','ENQUANTO','ENTAO','FACA','FIM','FUNCAO','INICIO','INTEIRO','PARA','PASSO','PROCEDIMENTO','REAL','REF','RETORNE','SE','SENAO','VARIAVEL']
+PALAVRAS_SEM_ATRIBUTOS = ['<-', '.', '(', ')', ';', ',', '-', '+', '*', '/', '%']
+PALAVRAS_OP_RELACIONAL = ['<', '<=', '=', '<>', '>', '>=']
+PALAVRAS_OP_LOGICO = ['&', '$', '|']
+DICT_SEM_ATRIBUTOS = {'<-':'ATRIBUICAO', '.':'PONTO', '(':'ABRE_PAR', ')':'FECHA_PAR', ';':'PONTO_VIRGULA', ',':'VIRGULA', '-':'SUBTRACAO', '+':'ADICAO', '*':'MULTIPLICACAO', '/':'DIVISAO', '%':'RESTO'}
+DICT_OP_RELACIONAL = {'<':'ME', '<=':'MEI', '=':'IG', '<>':'DI', '>':'MA', '>=':'MAI'}
+DICT_OP_LOGICO = {'&':'E', '$':'OU', '|':'NEG'}
 
 class Atomo(NamedTuple):
-  tipo: int
+  tipo: str
   lexema: str
   valor: Union[int, float]
   linha: int
@@ -34,18 +46,52 @@ class Analisador_Lexico:
       lexema = lexema + c
       c = self.proximo_char()
     self.retrair()
-    return Atomo(IDENTIFICADOR, lexema, 0, self.nlinha)
+    if lexema.upper() in PALAVRAS_RESERVADAS:
+      return Atomo('RESERVADAS', lexema.upper(), 0, self.nlinha)
+    else:
+      return Atomo('IDENTIFICADOR', lexema, 0, self.nlinha)
+
+  def tratar_sem_atributos(self):
+    lexema = self.buffer[self.i - 1]
+    c = self.proximo_char()
+    while (c in PALAVRAS_SEM_ATRIBUTOS):
+      lexema = lexema + c
+      c = self.proximo_char()
+    self.retrair()
+    if lexema in PALAVRAS_SEM_ATRIBUTOS:
+      return Atomo(DICT_SEM_ATRIBUTOS[lexema], lexema, 0, self.nlinha)
+
+  def tratar_relacional(self):
+    lexema = self.buffer[self.i - 1]
+    c = self.proximo_char()
+    while (c in PALAVRAS_SEM_ATRIBUTOS):
+      lexema = lexema + c
+      c = self.proximo_char()
+    self.retrair()
+    if lexema in PALAVRAS_OP_RELACIONAL:
+      return Atomo(DICT_OP_RELACIONAL[lexema], lexema, 0, self.nlinha)
+
+  def tratar_logico(self):
+    lexema = self.buffer[self.i - 1]
+    c = self.proximo_char()
+    while (c in PALAVRAS_SEM_ATRIBUTOS):
+      lexema = lexema + c
+      c = self.proximo_char()
+    self.retrair()
+    if lexema in PALAVRAS_OP_LOGICO:
+      return Atomo(DICT_OP_LOGICO[lexema], lexema, 0, self.nlinha)
 
   def tratar_frase(self):
     lexema = self.buffer[self.i - 1]
     c = self.proximo_char()
-    while (c.isalpha() or c.isdigit() or '\"'):
+    while (True):
       lexema = lexema + c
+      if len(lexema)>0 and c=='\"':
+        self.proximo_char()
+        break
       c = self.proximo_char()
     self.retrair()
-    return Atomo(IDENTIFICADOR, lexema, 0, self.nlinha)
-
-
+    return Atomo('FRASE', lexema, 0, self.nlinha)
 
   def tratar_numeros(self):
     lexema = self.buffer[self.i - 1]
@@ -65,13 +111,13 @@ class Analisador_Lexico:
           continue
       elif estado == 2:
         self.retrair()
-        return Atomo(NUM_INT, lexema, int(lexema), self.nlinha)
+        return Atomo('NUM_INT', lexema, int(lexema), self.nlinha)
       elif estado == 3:
         if c.isdigit():
           lexema = lexema + c
           estado = 4
         else:
-          return Atomo(ERRO, '', 0, self.nlinha)
+          return Atomo('ERRO', '', 0, self.nlinha)
       elif estado == 4:
         if c.isdigit():
           lexema = lexema + c
@@ -81,7 +127,7 @@ class Analisador_Lexico:
           continue
       elif estado == 5:
         self.retrair()
-        return Atomo(NUM_REAL, lexema, float(lexema), self.nlinha)
+        return Atomo('NUM_REAL', lexema, float(lexema), self.nlinha)
       
       c = self.proximo_char()
   
@@ -95,14 +141,19 @@ class Analisador_Lexico:
       if c == '\0':
         return Atomo(EOS, '', 0, self.nlinha)
       c = self.proximo_char()
-    if c.isalpha():  
+    if c in PALAVRAS_SEM_ATRIBUTOS:  
+      atomo = self.tratar_sem_atributos()
+    elif c in PALAVRAS_OP_RELACIONAL:  
+      atomo = self.tratar_relacional()
+    elif c in PALAVRAS_OP_LOGICO:  
+      atomo = self.tratar_logico()
+    elif c.isalpha():  
       atomo = self.tratar_identificador()
     elif c.isdigit():  
       atomo = self.tratar_numeros()
-    elif c == '\\':  
+    elif c == '\"':  
       atomo = self.tratar_frase()
     return atomo
-    
 
 def leia_arquivo():
   arquivo = open('portugul.ptl', 'r')
@@ -110,16 +161,14 @@ def leia_arquivo():
   arquivo.close()
   return buffer
 
-
 def main():
   buffer = leia_arquivo()
   lexico = Analisador_Lexico(buffer)
-  msg_atomo = ['ERRO', 'IDENTIF', 'NUM_INT', 'NUM_REAL', 'EOS']
+  msg_atomo = ['ERRO', 'IDENTIF', 'NUM_INT', 'NUM_REAL', 'EOS', 'FRASE', 'RESERVADAS', 'SEM ATRIBUTOS','RELACIONAL', 'LOGICO']
   atomo = lexico.proximo_atomo()
   while (atomo.tipo != ERRO and atomo.tipo != EOS):
-    print('Linha: {}  - atomo: {} \t lexema: {}'.format(atomo.linha, msg_atomo[atomo.tipo], atomo.lexema))
+    print('Linha: {}  - atomo: {} \t lexema: {}'.format(atomo.linha, atomo.tipo, atomo.lexema))
     atomo = lexico.proximo_atomo()
-
 
 main()
 
