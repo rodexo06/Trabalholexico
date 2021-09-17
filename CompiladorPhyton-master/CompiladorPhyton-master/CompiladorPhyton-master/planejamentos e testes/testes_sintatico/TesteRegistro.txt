@@ -1,8 +1,0 @@
-registro Pessoa {
-	cadeia nome;
-	inteiro idade;
-	}
-registro cidade {
-	cadeia nome;
-	inteiro populacao;
-	}

@@ -1,5 +1,0 @@
-//Erro de coment�rio inv�lido
-/* Coment�rio inv�lido
-/ * Coment�rio inv�lido
-Coment�rio inv�lido */
-\\ Coment�rio inv�lido
